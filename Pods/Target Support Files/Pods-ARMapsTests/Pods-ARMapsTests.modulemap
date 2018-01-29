@@ -1,0 +1,6 @@
+framework module Pods_ARMapsTests {
+  umbrella header "Pods-ARMapsTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
