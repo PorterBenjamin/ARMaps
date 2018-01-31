@@ -17,17 +17,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Set the view's delegate
+        super.viewDidLoad()
         sceneView.delegate = self
-        
-        // Show statistics such as fps and timing information
-//        sceneView.showsStatistics = true
-        
-        // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-        
-        // Set the scene to the view
-        sceneView.scene = scene
+        sceneView.showsStatistics = true
+        sceneView.scene = SCNScene()
+        let circleNode = createSphereNode(with: 0.2, color: UIColor.ARMaps.appleBlue)
+        circleNode.position = SCNVector3(0, 0, -1) // 1 meter in front of camera
+        sceneView.scene.rootNode.addChildNode(circleNode)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -51,17 +47,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         super.didReceiveMemoryWarning()
         // Release any cached data, images, etc that aren't in use.
     }
-
-    // MARK: - ARSCNViewDelegate
     
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
-     
-        return node
+    
+    func createSphereNode(with radius: CGFloat, color: UIColor) -> SCNNode {
+        let geometry = SCNSphere(radius: radius)
+        geometry.firstMaterial?.diffuse.contents = color
+        let sphereNode = SCNNode(geometry: geometry)
+        return sphereNode
     }
-*/
     
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user

@@ -193,11 +193,16 @@ class SearchController: UIViewController {
     }
     
     @IBAction func buttonStartNavigationAction(_ sender: Any) {
-        
+        locationManager.stopUpdatingLocation()
         if let arVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ARNavViewController") as? ARNavViewController {
-                arVC.mapDestination = self.mapDestination
-                arVC.steps = self.steps
-
+            arVC.mapDestination = self.mapDestination
+            arVC.steps = self.steps
+            arVC.currentCoordinate = currentCoordinate
+            arVC.selectedPin = selectedPin
+            
+           
+//            self.navigationController?.pushViewController(arVC, animated: true)
+            
             self.present(arVC, animated: true, completion: nil)
         }
         //Animations to get view ready
@@ -237,7 +242,7 @@ class SearchController: UIViewController {
     }
     
     func focusOnUser() {
-        let span = MKCoordinateSpanMake(0.02, 0.02)
+        let span = MKCoordinateSpanMake(0.015, 0.015)
         let region = MKCoordinateRegion(center: mapView.userLocation.coordinate, span: span)
         mapView.setCenter(mapView.userLocation.coordinate, animated: true)
         mapView.setRegion(region, animated: true)
@@ -277,8 +282,6 @@ class SearchController: UIViewController {
             self.steps = primaryRoute.steps
             for i in 0 ..< primaryRoute.steps.count {
                 let step = primaryRoute.steps[i]
-//                print(step.instructions)
-//                print(step.distance)
                 let region = CLCircularRegion(center: step.polyline.coordinate,
                                               radius: 5,
                                               identifier: "\(i)")
@@ -347,7 +350,8 @@ extension SearchController: HandleMapSearch {
         
         mapView.addAnnotation(annotation)
         let span = MKCoordinateSpanMake(0.05, 0.05)
-        let region = MKCoordinateRegionMake(placemark.coordinate, span)
+        let center = currentCoordinate.middleLocationWith(location: (selectedPin?.coordinate)!)
+        let region = MKCoordinateRegionMake(center, span)
         mapView.setRegion(region, animated: true)
         
         // Set mapItem global

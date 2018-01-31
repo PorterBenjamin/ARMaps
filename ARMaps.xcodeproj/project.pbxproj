@@ -18,6 +18,7 @@
 		B541D37C1FEDB890009ECE0B /* ARMapsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B541D37B1FEDB890009ECE0B /* ARMapsTests.swift */; };
 		B541D3871FEDB891009ECE0B /* ARMapsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B541D3861FEDB891009ECE0B /* ARMapsUITests.swift */; };
 		B5A034562006812600160C5E /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5A034552006812600160C5E /* MapKit.framework */; };
+		B5D9429B202154E800EA9126 /* CustomPolyline.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D9429A202154E800EA9126 /* CustomPolyline.swift */; };
 		B5EED42B201F9A6C00C1F26D /* ARNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EED42A201F9A6C00C1F26D /* ARNavViewController.swift */; };
 		B5FE8D01200525BA00AF1886 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5FE8D00200525BA00AF1886 /* SearchController.swift */; };
 		CE799D13B92F4197F989A3A5 /* Pods_ARMapsUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85384F98CA04B895580B15B9 /* Pods_ARMapsUITests.framework */; };
@@ -64,6 +65,7 @@
 		B541D3861FEDB891009ECE0B /* ARMapsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARMapsUITests.swift; sourceTree = "<group>"; };
 		B541D3881FEDB891009ECE0B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B5A034552006812600160C5E /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		B5D9429A202154E800EA9126 /* CustomPolyline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPolyline.swift; sourceTree = "<group>"; };
 		B5EED42A201F9A6C00C1F26D /* ARNavViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARNavViewController.swift; sourceTree = "<group>"; };
 		B5FE8D00200525BA00AF1886 /* SearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 		C0F7D6D20B80693BD3305DCE /* Pods_ARMaps.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ARMaps.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -140,6 +142,7 @@
 				B541D3721FEDB890009ECE0B /* Info.plist */,
 				B541D3641FEDB890009ECE0B /* AppDelegate.swift */,
 				B541D3661FEDB890009ECE0B /* art.scnassets */,
+				B5D9429C2021551B00EA9126 /* Assistance */,
 				B5FE8D02200528E400AF1886 /* ViewControllers */,
 				B541D36A1FEDB890009ECE0B /* Main.storyboard */,
 				B541D36D1FEDB890009ECE0B /* Assets.xcassets */,
@@ -174,6 +177,14 @@
 				85384F98CA04B895580B15B9 /* Pods_ARMapsUITests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B5D9429C2021551B00EA9126 /* Assistance */ = {
+			isa = PBXGroup;
+			children = (
+				B5D9429A202154E800EA9126 /* CustomPolyline.swift */,
+			);
+			path = Assistance;
 			sourceTree = "<group>";
 		};
 		B5FE8D02200528E400AF1886 /* ViewControllers */ = {
@@ -493,6 +504,7 @@
 				B5FE8D01200525BA00AF1886 /* SearchController.swift in Sources */,
 				B5EED42B201F9A6C00C1F26D /* ARNavViewController.swift in Sources */,
 				B541D3651FEDB890009ECE0B /* AppDelegate.swift in Sources */,
+				B5D9429B202154E800EA9126 /* CustomPolyline.swift in Sources */,
 				B517F96A2017E033004C7580 /* LocationSearchTable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -663,6 +675,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ZFQ9G8399E;
 				INFOPLIST_FILE = ARMaps/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = JammingApps.ARMaps;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -679,6 +692,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ZFQ9G8399E;
 				INFOPLIST_FILE = ARMaps/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = JammingApps.ARMaps;
 				PRODUCT_NAME = "$(TARGET_NAME)";

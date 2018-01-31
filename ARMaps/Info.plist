@@ -43,6 +43,10 @@
 	<string>By allowing location services we can navigate you correctly 😄</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>By allowing location services we can navigate you correctly 😄</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>By allowing location services we can navigate you correctly 😄</string>
+	<key>NSLocationUsageDescription</key>
+	<string>By allowing location services we can navigate you correctly 😄</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
