@@ -18,16 +18,11 @@ protocol HandleMapSearch {
 
 class SearchController: UIViewController {
 
-    @IBOutlet weak var directionsView: UIView!
-    @IBOutlet weak var directionsLabel: UILabel!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var buttonFocus: UIButton!
     @IBOutlet weak var buttonStartNavigation: UIButton!
-    
-    @IBOutlet weak var buttonStop: UIButton!
     @IBOutlet weak var lblPlace: UILabel!
     @IBOutlet weak var lblAddress: UILabel!
-    
     @IBOutlet weak var startNavCover: UIView!
     @IBOutlet weak var startNavView: UIView!
     @IBOutlet weak var StartNavViewConstraint: NSLayoutConstraint!
@@ -50,24 +45,6 @@ class SearchController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        directionsView.isHidden = true
-        directionsView.layer.cornerRadius = 10
-        directionsView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-        directionsView.layer.shadowColor = UIColor.black.cgColor
-        directionsView.layer.shadowOffset = CGSize(width: 0.0, height: 3.0)
-        directionsView.layer.shadowOpacity = 0.4
-        directionsView.layer.shadowRadius = 1.0
-        directionsView.layer.masksToBounds = false
-
-        buttonStop.isHidden = true
-        buttonStop.layer.cornerRadius = buttonStop.frame.height / 2
-        buttonStop.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
-        buttonStop.layer.shadowColor = UIColor.black.cgColor
-        buttonStop.layer.shadowOffset = CGSize(width: 0.0, height: 3.0)
-        buttonStop.layer.shadowOpacity = 0.4
-        buttonStop.layer.shadowRadius = 1.0
-        buttonStop.layer.masksToBounds = false
         
         buttonFocus.layer.cornerRadius = buttonFocus.frame.height / 2
         buttonFocus.layer.shadowColor = UIColor.black.cgColor
@@ -101,11 +78,14 @@ class SearchController: UIViewController {
         
         let searchBar = resultSearchController!.searchBar
         searchBar.sizeToFit()
-        searchBar.barTintColor = UIColor.white
         searchBar.tintColor = UIColor.white
+        for subView in searchBar.subviews[0].subviews where subView is UITextField {
+            subView.tintColor = UIColor.ARMaps.appleBlue
+        }
         
         //Change placeholder so it is different everytime the app is opened
-        searchBar.placeholder = "Search for any place"
+        searchBar.placeholder = "Search for a place or address"
+
         navigationItem.titleView = resultSearchController?.searchBar
 
         resultSearchController?.hidesNavigationBarDuringPresentation = false
@@ -177,9 +157,8 @@ class SearchController: UIViewController {
     
     func stopNavigation() {
         // Hide all stuff
-        self.buttonStop.isHidden = true
-        self.directionsView.isHidden = true
         self.startNavCover.isHidden = true
+        
         //reset stuff
         stepCounter = 0
         steps = [MKRouteStep]()
@@ -200,41 +179,8 @@ class SearchController: UIViewController {
             arVC.currentCoordinate = currentCoordinate
             arVC.selectedPin = selectedPin
             
-           
-//            self.navigationController?.pushViewController(arVC, animated: true)
-            
             self.present(arVC, animated: true, completion: nil)
         }
-        //Animations to get view ready
-//        self.buttonStop.isHidden = false
-//        UIView.animate(withDuration: 1.0, delay: 0, usingSpringWithDamping: 0.3, initialSpringVelocity: 6.0,
-//                       options: .allowUserInteraction, animations: { [weak self] in
-//                        self!.buttonStop.transform = .identity
-//                        self!.directionsView.transform = .identity
-//            }, completion: nil)
-//
-//        self.StartNavViewConstraint.constant = 0 //100
-//        self.startNavCover.isHidden = true
-//
-//        self.directionsView.isHidden = false
-//
-//        UIView.animate(withDuration: 0.5) {
-//            self.directionsView.isHidden = false
-//            self.buttonStartNavigation.isHidden = true
-//            self.view.layoutIfNeeded()
-//        }
-//
-//        //Speech synth
-//        let initialMessage = "In \(self.steps[0].distance) meters, \(self.steps[0].instructions) then in \(self.steps[1].distance) meters, \(self.steps[1].instructions)."
-//        self.directionsLabel.text = initialMessage
-//
-//        let speechUtterance = AVSpeechUtterance(string: initialMessage)
-//        speechUtterance.voice = self.voice
-//        self.speak.speak(speechUtterance)
-//
-//        locationManager.allowsBackgroundLocationUpdates = true
-//
-//        self.stepCounter += 1
     }
     
     @IBAction func buttonFocusAction(_ sender: Any) {
@@ -311,14 +257,14 @@ extension SearchController: CLLocationManagerDelegate {
                 if stepCounter < steps.count {
                     let currentStep = steps[stepCounter]
                     let message = "In \(currentStep.distance) meters, \(currentStep.instructions)"
-                    directionsLabel.text = message
+    
                     let speechUtterance = AVSpeechUtterance(string: message)
                     speechUtterance.voice = self.voice
                     self.speak.speak(speechUtterance)
                     
                 } else {
                     let message = "Arrived at destination"
-                    directionsLabel.text = message
+  
                     let speechUtterance = AVSpeechUtterance(string: message)
                     speechUtterance.voice = self.voice
                     self.speak.speak(speechUtterance)

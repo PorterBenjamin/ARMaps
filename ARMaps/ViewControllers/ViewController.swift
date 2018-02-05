@@ -31,7 +31,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
-
         // Run the view's session
         sceneView.session.run(configuration)
     }
@@ -51,7 +50,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func createSphereNode(with radius: CGFloat, color: UIColor) -> SCNNode {
         let geometry = SCNSphere(radius: radius)
-        geometry.firstMaterial?.diffuse.contents = color
+        
+        let material = SCNMaterial()
+        
+        material.diffuse.contents = #imageLiteral(resourceName: "check")
+        geometry.materials = [material]
+//        geometry.firstMaterial?.diffuse.contents = color
         let sphereNode = SCNNode(geometry: geometry)
         return sphereNode
     }

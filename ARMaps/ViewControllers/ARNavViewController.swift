@@ -8,13 +8,14 @@
 
 import UIKit
 import SceneKit
+//import ARKit
 import ARCL
 import CoreLocation
 import MapKit
 import AVFoundation
 
 class ARNavViewController: UIViewController, SceneLocationViewDelegate{
-    
+
     @IBOutlet weak var lblDirections: UILabel!
     @IBOutlet weak var buttonStop: UIButton!
     @IBOutlet weak var mapView: MKMapView!
@@ -59,20 +60,7 @@ class ARNavViewController: UIViewController, SceneLocationViewDelegate{
         buttonStop.layer.shadowOpacity = 0.4
         buttonStop.layer.shadowRadius = 1.0
         buttonStop.layer.masksToBounds = false
-        
-        //Set to true to display an arrow which points north.
-        //Checkout the comments in the property description and on the readme on this.
-        //        sceneLocationView.orientToTrueNorth = false
-        
-        //        sceneLocationView.locationEstimateMethod = .coreLocationDataOnly
-        sceneLocationView.showAxesNode = false
-        sceneLocationView.locationDelegate = self
-        let pinCoordinate = CLLocationCoordinate2D(latitude: (mapDestination?.placemark.coordinate.latitude)!, longitude: (mapDestination?.placemark.coordinate.longitude)!)
-        let pinLocation = CLLocation(coordinate: pinCoordinate, altitude: 150)
-        let pinImage = UIImage(named: "Pin")!
-        
-        let pinLocationNode = LocationAnnotationNode(location: pinLocation, image: pinImage)
-        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: pinLocationNode)
+
         
         locationManager.delegate = self
         locationManager.allowsBackgroundLocationUpdates = true
@@ -84,6 +72,9 @@ class ARNavViewController: UIViewController, SceneLocationViewDelegate{
             }
             locationManager.startUpdatingLocation()
         }
+        
+        sceneLocationView.showAxesNode = false
+        sceneLocationView.locationDelegate = self
         
         mapView.delegate = self
         mapView.showsUserLocation = true
@@ -107,6 +98,15 @@ class ARNavViewController: UIViewController, SceneLocationViewDelegate{
         let center = currentCoordinate.middleLocationWith(location: (selectedPin?.coordinate)!)
         let region = MKCoordinateRegionMake(center, span)
         mapView.setRegion(region, animated: true)
+        
+        
+        
+        let coordinate = CLLocationCoordinate2D(latitude: (mapDestination?.placemark.coordinate.latitude)!, longitude: (mapDestination?.placemark.coordinate.longitude)!)
+        let location = CLLocation(coordinate: coordinate, altitude: 300)
+        let circleNode = createConeNode(color: UIColor.ARMaps.appleBlue, location: location)
+  
+        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: circleNode)
+
         self.getDirections()
     }
     
@@ -138,34 +138,22 @@ class ARNavViewController: UIViewController, SceneLocationViewDelegate{
                 self.locationManager.startMonitoring(for: region)
                 let circle = MKCircle(center: region.center, radius: region.radius)
                 self.mapView.add(circle)
-                let location: CLLocation =  CLLocation(latitude: step.polyline.coordinate.latitude, longitude: step.polyline.coordinate.longitude)
-                let locationNode = LocationAnnotationNode(location: location, image: #imageLiteral(resourceName: "Pin"))
-//                LocationNode
-                self.sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: locationNode)
+                
+                //Displays current location mark
+                
+                let coordinate = CLLocationCoordinate2D(latitude: step.polyline.coordinate.latitude, longitude: step.polyline.coordinate.longitude)
+                let location = CLLocation(coordinate: coordinate, altitude: 150)
+                
+                let circleNode = self.createSphereNode(color: UIColor.ARMaps.appleBlue, location: location)
+                self.sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: circleNode)
+                
+                
             }
         }
         
         //Speech synth
         let initialMessage = "In \(self.steps[0].distance) meters, \(self.steps[0].instructions) then in \(self.steps[1].distance) meters, \(self.steps[1].instructions)."
         self.lblDirections.text = initialMessage
-        
-        let coord = CLLocationCoordinate2D(latitude: self.steps[0].polyline.coordinate.latitude,
-                                           longitude: self.steps[0].polyline.coordinate.longitude)
-        
-        let coord1 = CLLocation(latitude: self.steps[1].polyline.coordinate.latitude,
-                                longitude: self.steps[1].polyline.coordinate.longitude)
-        
-        let coord2 = CLLocation(latitude: self.steps[1].polyline.coordinate.latitude,
-                                           longitude: self.steps[1].polyline.coordinate.longitude)
-//        let m = c.locationWithBearing(h, distance: distance)
-        let heading = getBearingBetweenTwoPoints1(point1: coord1, point2: coord2)
-//        let camera = MKMapCamera(lookingAtCenter: coord,
-//                                 fromDistance: distance,
-//                                 pitch: pitch,
-//                                 heading: currentHeading)
-//
-//
-//        mapView.camera = camera
         
         let speechUtterance = AVSpeechUtterance(string: initialMessage)
         speechUtterance.voice = self.voice
@@ -178,42 +166,64 @@ class ARNavViewController: UIViewController, SceneLocationViewDelegate{
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        sceneLocationView.run()
+        // Create a session configuration
+//        let configuration = ARWorldTrackingConfiguration()
+        // Run the view's session
+//        sceneView.session.run(configuration)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        sceneLocationView.pause()
+        
+        // Pause the view's session
+//        sceneView.session.pause()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         sceneLocationView.frame = view.bounds
+       
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
+    func sceneLocationViewDidAddSceneLocationEstimate(sceneLocationView: SceneLocationView, position: SCNVector3, location: CLLocation) {
+        
+    }
     
-    func degreesToRadians(degrees: Double) -> Double { return degrees * .pi / 180.0 }
-    func radiansToDegrees(radians: Double) -> Double { return radians * 180.0 / .pi }
+    func sceneLocationViewDidRemoveSceneLocationEstimate(sceneLocationView: SceneLocationView, position: SCNVector3, location: CLLocation) {
+        
+    }
     
-    func getBearingBetweenTwoPoints1(point1 : CLLocation, point2 : CLLocation) -> Double {
+    func sceneLocationViewDidConfirmLocationOfNode(sceneLocationView: SceneLocationView, node: LocationNode) {
         
-        let lat1 = degreesToRadians(degrees: point1.coordinate.latitude)
-        let lon1 = degreesToRadians(degrees: point1.coordinate.longitude)
+    }
+    
+    func sceneLocationViewDidSetupSceneNode(sceneLocationView: SceneLocationView, sceneNode: SCNNode) {
         
-        let lat2 = degreesToRadians(degrees: point2.coordinate.latitude)
-        let lon2 = degreesToRadians(degrees: point2.coordinate.longitude)
+    }
+    
+    func sceneLocationViewDidUpdateLocationAndScaleOfLocationNode(sceneLocationView: SceneLocationView, locationNode: LocationNode) {
         
-        let dLon = lon2 - lon1
-        
-        let y = sin(dLon) * cos(lat2)
-        let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
-        let radiansBearing = atan2(y, x)
-        
-        return radiansToDegrees(radians: radiansBearing)
+    }
+    
+    
+    func createConeNode(color: UIColor, location: CLLocation) -> LocationNode {
+        let coneNode = LocationNode(location: location)
+        let geometry = SCNCone(topRadius: 50, bottomRadius: 0, height: 200)
+        geometry.firstMaterial?.diffuse.contents = color
+        coneNode.geometry = geometry
+        return coneNode
+    }
+    
+    func createSphereNode(color: UIColor, location: CLLocation) -> LocationNode {
+        let sphereNode = LocationNode(location: location)
+        let geometry = SCNSphere(radius: 15)
+        geometry.firstMaterial?.diffuse.contents = color
+        sphereNode.geometry = geometry
+        return sphereNode
     }
     
     @IBAction func buttonStopAction(_ sender: Any) {
@@ -227,28 +237,7 @@ class ARNavViewController: UIViewController, SceneLocationViewDelegate{
 
         self.dismiss(animated: true, completion: nil)
     }
-    
-
-    //MARK: SceneLocationViewDelegate
-    func sceneLocationViewDidAddSceneLocationEstimate(sceneLocationView: SceneLocationView, position: SCNVector3, location: CLLocation) {
-    }
-    
-    func sceneLocationViewDidRemoveSceneLocationEstimate(sceneLocationView: SceneLocationView, position: SCNVector3, location: CLLocation) {
-    }
-    
-    func sceneLocationViewDidConfirmLocationOfNode(sceneLocationView: SceneLocationView, node: LocationNode) {
-    }
-    
-    func sceneLocationViewDidSetupSceneNode(sceneLocationView: SceneLocationView, sceneNode: SCNNode) {
-        
-    }
-    
-    func sceneLocationViewDidUpdateLocationAndScaleOfLocationNode(sceneLocationView: SceneLocationView, locationNode: LocationNode) {
-        
-    }
 }
-
-
 
 
 // MARK: - Map View Delegate
@@ -264,7 +253,7 @@ extension ARNavViewController: MKMapViewDelegate {
             let renderer = MKCircleRenderer(overlay: overlay)
             renderer.strokeColor = UIColor.ARMaps.appleBlue
             renderer.fillColor = UIColor.ARMaps.appleBlue
-            renderer.alpha = 0.25
+            renderer.alpha = 0
             return renderer
         }
         return MKOverlayRenderer()
@@ -282,7 +271,21 @@ extension ARNavViewController: CLLocationManagerDelegate {
         mapView.userTrackingMode = .follow
         
     }
-    
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading heading: CLHeading) {
+        currentHeading = heading.magneticHeading
+        if stepCounter < steps.count {
+            let currentStep = steps[stepCounter-1]
+            let coord = CLLocationCoordinate2D(latitude: currentStep.polyline.coordinate.latitude,
+                                               longitude: currentStep.polyline.coordinate.longitude)
+            let camera = MKMapCamera(lookingAtCenter: coord,
+                                     fromDistance: distance,
+                                     pitch: pitch,
+                                     heading: currentHeading)
+            
+            mapView.camera = camera
+        }
+        
+    }
     
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         print("ENTERED")
@@ -303,6 +306,9 @@ extension ARNavViewController: CLLocationManagerDelegate {
             
             mapView.camera = camera
             
+            
+            
+            
         } else {
             let message = "Arrived at destination"
             lblDirections.text = message
@@ -316,19 +322,7 @@ extension ARNavViewController: CLLocationManagerDelegate {
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didUpdateHeading heading: CLHeading) {
-        currentHeading = heading.magneticHeading
-        let currentStep = steps[stepCounter-1]
-        let coord = CLLocationCoordinate2D(latitude: currentStep.polyline.coordinate.latitude,
-                                           longitude: currentStep.polyline.coordinate.longitude)
-        let camera = MKMapCamera(lookingAtCenter: coord,
-                                 fromDistance: distance,
-                                 pitch: pitch,
-                                 heading: currentHeading)
-        
-        mapView.camera = camera
-
-    }
+    
 }
 
 extension CLLocationCoordinate2D {
