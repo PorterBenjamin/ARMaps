@@ -145,6 +145,7 @@ class ARNavViewController: UIViewController, SceneLocationViewDelegate{
                 let location = CLLocation(coordinate: coordinate, altitude: 150)
                 
                 let circleNode = self.createSphereNode(color: UIColor.ARMaps.appleBlue, location: location)
+                
                 self.sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: circleNode)
                 
                 
@@ -223,8 +224,10 @@ class ARNavViewController: UIViewController, SceneLocationViewDelegate{
         let geometry = SCNSphere(radius: 15)
         geometry.firstMaterial?.diffuse.contents = color
         sphereNode.geometry = geometry
+        
         return sphereNode
     }
+    
     
     @IBAction func buttonStopAction(_ sender: Any) {
         stepCounter = 0
