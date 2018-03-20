@@ -20,6 +20,7 @@ class SearchController: UIViewController {
 
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var buttonFocus: UIButton!
+    @IBOutlet weak var buttonClear: UIButton!
     @IBOutlet weak var buttonStartNavigation: UIButton!
     @IBOutlet weak var lblPlace: UILabel!
     @IBOutlet weak var lblAddress: UILabel!
@@ -46,12 +47,27 @@ class SearchController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         buttonFocus.layer.cornerRadius = buttonFocus.frame.height / 2
         buttonFocus.layer.shadowColor = UIColor.black.cgColor
         buttonFocus.layer.shadowOffset = CGSize(width: 0.0, height: 3.0)
         buttonFocus.layer.shadowOpacity = 0.4
         buttonFocus.layer.shadowRadius = 1.0
         buttonFocus.layer.masksToBounds = false
+        
+        buttonClear.isHidden = true
+        buttonClear.layer.cornerRadius = buttonFocus.frame.height / 2
+        buttonClear.layer.shadowColor = UIColor.black.cgColor
+        buttonClear.layer.shadowOffset = CGSize(width: 0.0, height: 3.0)
+        buttonClear.layer.shadowOpacity = 0.4
+        buttonClear.layer.shadowRadius = 1.0
+        buttonClear.layer.masksToBounds = false
+        
+        self.navigationController?.navigationBar.layer.shadowColor = UIColor.black.cgColor
+        self.navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 0.0, height: 3.0)
+        self.navigationController?.navigationBar.layer.shadowRadius = 1.0
+        self.navigationController?.navigationBar.layer.shadowOpacity = 0.4
+        self.navigationController?.navigationBar.layer.masksToBounds = false
         
         StartNavViewConstraint.constant = 0 // 100
         startNavCover.isHidden = true
@@ -157,8 +173,13 @@ class SearchController: UIViewController {
     
     func stopNavigation() {
         // Hide all stuff
+        self.StartNavViewConstraint.constant = 0
         self.startNavCover.isHidden = true
-        
+        self.buttonClear.isHidden = true
+        self.buttonStartNavigation.isHidden = true
+        UIView.animate(withDuration: 0.5) {
+            self.view.layoutIfNeeded()
+        }
         //reset stuff
         stepCounter = 0
         steps = [MKRouteStep]()
@@ -185,6 +206,9 @@ class SearchController: UIViewController {
     
     @IBAction func buttonFocusAction(_ sender: Any) {
         focusOnUser()
+    }
+    @IBAction func buttonClearAction(_ sender: Any) {
+        stopNavigation()
     }
     
     func focusOnUser() {
@@ -306,6 +330,7 @@ extension SearchController: HandleMapSearch {
         
         self.StartNavViewConstraint.constant = 100
         startNavCover.isHidden = false
+        buttonClear.isHidden = false
         self.buttonStartNavigation.isHidden = false
         UIView.animate(withDuration: 0.5) {
             self.view.layoutIfNeeded()
@@ -358,6 +383,7 @@ extension SearchController: MKMapViewDelegate {
 extension UIColor {
     struct ARMaps {
         static let appleBlue = UIColor(hex: "007aff")
+        static let arBlue = UIColor(hex: "50B8FC")
     }
 }
 

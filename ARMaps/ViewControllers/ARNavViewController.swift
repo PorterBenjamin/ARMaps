@@ -102,10 +102,15 @@ class ARNavViewController: UIViewController, SceneLocationViewDelegate{
         
         
         let coordinate = CLLocationCoordinate2D(latitude: (mapDestination?.placemark.coordinate.latitude)!, longitude: (mapDestination?.placemark.coordinate.longitude)!)
-        let location = CLLocation(coordinate: coordinate, altitude: 300)
-        let circleNode = createConeNode(color: UIColor.ARMaps.appleBlue, location: location)
+        let a = (self.locationManager.location?.altitude)!
+        let alt = a - 10
+        let location = CLLocation(coordinate: coordinate, altitude: alt)
+        let image = UIImage(named: "pin")!
+        
+        let pinNode = LocationAnnotationNode(location: location, image: image)
+//        let circleNode = createConeNode(color: UIColor.ARMaps.appleBlue, location: location)
   
-        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: circleNode)
+        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: pinNode)
 
         self.getDirections()
     }
@@ -132,6 +137,8 @@ class ARNavViewController: UIViewController, SceneLocationViewDelegate{
             self.steps = primaryRoute.steps
             for i in 0 ..< primaryRoute.steps.count {
                 let step = primaryRoute.steps[i]
+               
+        
                 let region = CLCircularRegion(center: step.polyline.coordinate,
                                               radius: 2,
                                               identifier: "\(i)")
@@ -141,14 +148,31 @@ class ARNavViewController: UIViewController, SceneLocationViewDelegate{
                 
                 //Displays current location mark
                 
+                
                 let coordinate = CLLocationCoordinate2D(latitude: step.polyline.coordinate.latitude, longitude: step.polyline.coordinate.longitude)
-                let location = CLLocation(coordinate: coordinate, altitude: 150)
                 
-                let circleNode = self.createSphereNode(color: UIColor.ARMaps.appleBlue, location: location)
-                
-                self.sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: circleNode)
-                
-                
+                // checks if safe to calculate next step
+                let distance:Double
+                if i < (primaryRoute.steps.count - 1) {
+                    let nextStep = primaryRoute.steps[i+1]
+                    let coord1 = CLLocation(latitude: step.polyline.coordinate.latitude, longitude: step.polyline.coordinate.longitude)
+                    let coord2 = CLLocation(latitude: nextStep.polyline.coordinate.latitude, longitude: nextStep.polyline.coordinate.longitude)
+                    distance = coord1.distance(from: coord2)
+                    let a = (self.locationManager.location?.altitude)!
+                    let alt = a - 10
+                    let location = CLLocation(coordinate: coordinate, altitude: alt)
+//                    let circleNode = self.createPlaneNode(color: UIColor.ARMaps.appleBlue, location: location, width: CGFloat(distance))
+                    let circleNode = self.createSphereNode(color: UIColor.ARMaps.arBlue, location: location)
+                    self.sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: circleNode)
+                }else{
+                    
+                    
+                    let a = (self.locationManager.location?.altitude)!
+                    let alt = a - 10
+                    let location = CLLocation(coordinate: coordinate, altitude: alt)
+                    let circleNode = self.createSphereNode(color: UIColor.ARMaps.arBlue, location: location)
+                    self.sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: circleNode)
+                }
             }
         }
         
@@ -221,11 +245,24 @@ class ARNavViewController: UIViewController, SceneLocationViewDelegate{
     
     func createSphereNode(color: UIColor, location: CLLocation) -> LocationNode {
         let sphereNode = LocationNode(location: location)
-        let geometry = SCNSphere(radius: 15)
+        let geometry = SCNSphere(radius: 2)
+        geometry.firstMaterial?.lightingModel = .blinn
         geometry.firstMaterial?.diffuse.contents = color
         sphereNode.geometry = geometry
         
         return sphereNode
+    }
+    
+    
+    func createPlaneNode(color: UIColor, location: CLLocation, width: CGFloat) -> LocationNode {
+        let planeNode = LocationNode(location: location)
+//        let geometry = SCNPlane(width: width, height: 4)
+        let geometry = SCNBox(width: width, height: 1, length: 3, chamferRadius: 0)
+        geometry.firstMaterial?.diffuse.contents = color
+        planeNode.geometry = geometry
+        
+//        planeNode.eulerAngles = SCNVector3Make(0, Float.pi/2, 0)
+        return planeNode
     }
     
     
